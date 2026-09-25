@@ -1,0 +1,19 @@
+# Compiled executables (GitHub blocks files > 100MB)
+*.exe
+
+# Cache and temporary folders
+.cache/
+output/
+__pycache__/
+*.pyc
+
+# Local environments
+.env
+venv/
+env/
+.venv/
+
+# Build artifacts
+build/
+dist/
+*.spec

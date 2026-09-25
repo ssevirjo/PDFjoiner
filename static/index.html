@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="lv" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Dokumentu Apvienotājs | PDF, DOCX, JPG apvienošana</title>
+  <meta name="description" content="Lietotne PDF, Word (DOCX) un attēlu failu apvienošanai vienā PDF dokumentā ar pilnīgu latviešu valodas diakritikas un formatējuma saglabāšanu.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Galvene -->
+    <header class="app-header">
+      <div class="header-container">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h1 class="brand-title">PDF Dokumentu Apvienotājs</h1>
+            <p class="brand-subtitle">PDF, DOCX un attēlu apvienošana • Pilnīga latviešu valodas teksta un diakritikas saglabāšana</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <div class="header-badges">
+            <span class="badge badge-accent" id="statFilesCount">0 faili</span>
+            <span class="badge badge-secondary" id="statPagesCount">0 lappuses</span>
+          </div>
+          <button class="btn btn-icon theme-toggle" id="themeToggleBtn" title="Pārslēgt motīvu (gaišais/tumšais)">
+            <svg class="sun-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Galvenais saturs -->
+    <main class="main-content">
+      <!-- Augšupielādes zona -->
+      <section class="upload-section">
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" multiple accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.webp,.bmp,.tiff" class="file-input-hidden">
+          <div class="drop-zone-content">
+            <div class="drop-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <h2 class="drop-title">Velciet un nometiet dokumentus šeit vai <span class="text-accent underline-btn">izvēlieties no datora</span></h2>
+            <p class="drop-description">
+              Atbalstītie formāti: <strong>PDF</strong>, <strong>DOCX (Word)</strong>, <strong>JPG / PNG</strong> (var pievienot 20+ failus vienlaicīgi)
+            </p>
+            <div class="format-pills">
+              <span class="pill pill-pdf">.PDF (vektoru saglabāšana)</span>
+              <span class="pill pill-docx">.DOCX (Word oriģinālais izkārtojums)</span>
+              <span class="pill pill-img">.JPG / .PNG / .WEBP</span>
+              <span class="pill pill-lang">🇱🇻 Latviešu valoda (ā, č, ē, ģ, ī, ķ, ļ, ņ, š, ū, ž)</span>
+            </div>
+          </div>
+          <div class="upload-spinner-overlay" id="uploadSpinner">
+            <div class="spinner"></div>
+            <p id="uploadStatusText">Failu apstrāde un priekšskatījuma sagatavošana...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dokumentu pārvaldības sadaļa -->
+      <section class="documents-section" id="documentsSection" style="display: none;">
+        <!-- Rīkjosla -->
+        <div class="toolbar-card">
+          <div class="toolbar-left">
+            <span class="toolbar-label">Dokumentu secība:</span>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline" id="sortAzBtn" title="Kārtot pēc faila nosaukuma (A-Z)">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h12M3 18h6"/></svg>
+                Nosaukums A-Z
+              </button>
+              <button class="btn btn-sm btn-outline" id="sortZaBtn" title="Kārtot pēc faila nosaukuma (Z-A)">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h6M3 12h12M3 18h18"/></svg>
+                Nosaukums Z-A
+              </button>
+              <button class="btn btn-sm btn-outline" id="reverseOrderBtn" title="Apgriezt pašreizējo secību">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 16 3 12 7 8"/><line x1="3" y1="12" x2="21" y2="12"/><polyline points="17 8 21 12 17 16"/></svg>
+                Apgriezt secību
+              </button>
+            </div>
+          </div>
+
+          <div class="toolbar-right">
+            <button class="btn btn-sm btn-secondary" id="addMoreFilesBtn">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Pievienot vēl failus
+            </button>
+            <button class="btn btn-sm btn-danger-outline" id="clearAllBtn">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              Notīrīt sarakstu
+            </button>
+          </div>
+        </div>
+
+        <div class="reorder-tip">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <span>Velciet kartītes ar peli, turot aiz roktura <strong>⠿</strong>, vai izmantojiet bultiņas <strong>▲ ▼</strong>, lai mainītu dokumentu secību pirms apvienošanas.</span>
+        </div>
+
+        <!-- Failu saraksts -->
+        <div class="files-list" id="filesList">
+          <!-- Dinamiski ģenerēti dokumentu ieraksti -->
+        </div>
+
+        <!-- Apvienošanas iestatījumi un darbības panelis -->
+        <div class="merge-action-card">
+          <div class="merge-settings-grid">
+            <div class="setting-group">
+              <label for="outputFilename" class="setting-label">Apvienotā PDF faila nosaukums:</label>
+              <div class="input-with-ext">
+                <input type="text" id="outputFilename" class="form-input" value="Apvienotais_dokuments.pdf">
+              </div>
+            </div>
+
+            <div class="setting-group">
+              <label for="outputFolder" class="setting-label">Saglabāšanas mape (tiek atcerēta):</label>
+              <div class="folder-input-group">
+                <input type="text" id="outputFolder" class="form-input" placeholder="Noklusējuma ('output' mape)">
+                <button type="button" class="btn btn-secondary btn-sm" id="chooseFolderBtn" title="Izvēlēties mapi datorā">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  Izvēlēties...
+                </button>
+              </div>
+            </div>
+
+            <div class="setting-group setting-full-width">
+              <label for="imageFitSelect" class="setting-label">Attēlu lapas formāts:</label>
+              <select id="imageFitSelect" class="form-select">
+                <option value="a4_auto" selected>Standarta A4 formāts (auto orientācija: vertikāla/horizontāla)</option>
+                <option value="original">Sākotnējais attēla / skenējuma izmērs</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="merge-options-row">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="openAfterCreate" checked>
+              <span class="checkmark"></span>
+              <span>Pēc izveides atvērt PDF failu sistēmā</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox" id="openInExplorer" checked>
+              <span class="checkmark"></span>
+              <span>Parādīt failu Windows Explorer mapē</span>
+            </label>
+          </div>
+
+          <div class="merge-button-wrapper">
+            <button class="btn btn-primary btn-large btn-glow" id="mergeSubmitBtn">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="12" y1="18" x2="12" y2="12"></line>
+                <polyline points="9 15 12 12 15 15"></polyline>
+              </svg>
+              <span id="mergeBtnText">APVIENOT VISUS DOKUMENTUS VIENĀ PDF</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Priekšskatījuma modālais logs -->
+    <div class="modal" id="previewModal">
+      <div class="modal-backdrop" id="modalBackdrop"></div>
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <h3 class="modal-title" id="previewModalTitle">Dokumenta priekšskatījums</h3>
+            <span class="modal-subtitle" id="previewModalSubtitle">Lappuse 1 no 1</span>
+          </div>
+          <div class="modal-header-actions">
+            <div class="pagination-controls" id="previewPagination">
+              <button class="btn btn-icon btn-sm" id="prevPageBtn" title="Iepriekšējā lappuse">◀</button>
+              <span id="pageIndicator" class="page-indicator">1 / 1</span>
+              <button class="btn btn-icon btn-sm" id="nextPageBtn" title="Nākamā lappuse">▶</button>
+            </div>
+            <button class="btn btn-icon modal-close" id="modalCloseBtn" title="Aizvērt">✕</button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="preview-viewport" id="previewViewport">
+            <img id="previewImage" src="" alt="Lappuses priekšskatījums">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Veiksmīga rezultāta modālais logs -->
+    <div class="modal" id="successModal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-dialog modal-success">
+        <div class="modal-body text-center">
+          <div class="success-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <h2 class="success-title">Dokumenti veiksmīgi apvienoti!</h2>
+          <p class="success-description" id="successDetails">Gatavais fails ir izveidots ar pilnīgu teksta un latviešu valodas diakritikas saglabāšanu.</p>
+          
+          <div class="success-stats-card">
+            <div class="stat-item">
+              <span class="stat-value" id="resPages">0</span>
+              <span class="stat-name">Kopā lappuses</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="resSize">0 MB</span>
+              <span class="stat-name">Faila izmērs</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="resCount">0</span>
+              <span class="stat-name">Dokumenti</span>
+            </div>
+          </div>
+
+          <div class="success-actions">
+            <a id="downloadMergedLink" href="#" class="btn btn-primary btn-large" download>
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Lejupielādēt PDF failu
+            </a>
+            <button class="btn btn-secondary" id="openFolderBtn">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+              Atvērt mapi pārlūkā Explorer
+            </button>
+            <button class="btn btn-outline" id="closeSuccessBtn">Turpināt darbu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

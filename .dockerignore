@@ -1,0 +1,10 @@
+.cache
+output
+__pycache__
+*.pyc
+*.exe
+.git
+.github
+*.bat
+*.cmd
+test_samples
