@@ -226,14 +226,14 @@ async def merge_files(request: MergeRequest):
                 pass
         
         # Optionally open directly in Windows PDF viewer
-        if request.open_after_create:
+        if request.open_after_create and hasattr(os, "startfile"):
             try:
                 os.startfile(str(dest_file_path))
             except Exception as e:
                 print(f"Neizdevās atvērt failu automātiski: {e}")
                 
         # Optionally open in explorer
-        if request.open_explorer:
+        if request.open_explorer and sys.platform == "win32":
             try:
                 import subprocess
                 subprocess.Popen(f'explorer /select,"{dest_file_path}"')
@@ -274,10 +274,11 @@ async def download_file(filename: str):
 @app.post("/api/open-output-folder")
 async def open_output_folder():
     try:
-        os.startfile(str(OUTPUT_DIR))
+        if hasattr(os, "startfile"):
+            os.startfile(str(OUTPUT_DIR))
         return JSONResponse(content={"success": True})
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(content={"success": False, "error": str(e)})
 
 @app.post("/api/clear")
 async def clear_uploaded_files():

@@ -8,8 +8,18 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 import pymupdf
 from PIL import Image
-import pythoncom
-import win32com.client
+
+# Import Windows-specific COM automation only on Windows platform
+if sys.platform == "win32":
+    try:
+        import pythoncom
+        import win32com.client
+    except ImportError:
+        pythoncom = None
+        win32com = None
+else:
+    pythoncom = None
+    win32com = None
 
 # COM lock to serialize Word automation across threads safely
 word_lock = threading.Lock()
@@ -30,7 +40,7 @@ def convert_docx_to_pdf(docx_path: str, output_pdf_path: str) -> bool:
     abs_pdf = os.path.abspath(output_pdf_path)
 
     # 1. On Windows, use Microsoft Word COM automation
-    if sys.platform == "win32":
+    if sys.platform == "win32" and pythoncom and win32com:
         try:
             with word_lock:
                 pythoncom.CoInitialize()
