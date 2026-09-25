@@ -68,6 +68,16 @@ async def serve_index():
         return HTMLResponse("<h1>Index file not found</h1>", status_code=404)
     return HTMLResponse(content=index_file.read_text(encoding="utf-8"))
 
+@app.get("/favicon.ico")
+async def serve_favicon():
+    fav_ico = STATIC_DIR / "favicon.ico"
+    if fav_ico.exists():
+        return FileResponse(path=str(fav_ico), media_type="image/x-icon")
+    fav_svg = STATIC_DIR / "favicon.svg"
+    if fav_svg.exists():
+        return FileResponse(path=str(fav_svg), media_type="image/svg+xml")
+    raise HTTPException(status_code=404, detail="Favicon not found")
+
 @app.post("/api/upload")
 async def upload_documents(files: List[UploadFile] = File(...)):
     results = []
